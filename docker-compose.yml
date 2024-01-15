@@ -1,0 +1,29 @@
+version: "3"
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./wordpress:/var/www/html
+    ports:
+      - 8080:80
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:10
+    hostname: mariadb
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./schema:/docker-entrypoint-initdb.d
+    ports:
+      - 3310:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 1234
+
+volumes:
+  mysql_data:

@@ -1,16 +1,15 @@
-#FROM php:7.4-apache 
-FROM php:8.2-apache 
+FROM php:7.4-apache
 
-# Update OS and install common dev tools
 RUN apt-get update
-RUN apt-get install -y wget vim git zip unzip zlib1g-dev libzip-dev libpng-dev
- 
-# Install PHP extensions needed
-RUN docker-php-ext-install -j$(nproc) mysqli pdo_mysql gd zip pcntl exif
+RUN apt-get install --yes --force-yes cron g++ gettext libicu-dev openssl libc-client-dev libkrb5-dev libxml2-dev libfreetype6-dev libgd-dev libmcrypt-dev bzip2 libbz2-dev libtidy-dev libcurl4-openssl-dev libz-dev libmemcached-dev libxslt-dev
 
-# Enable common Apache modules
-RUN a2enmod headers expires rewrite
+RUN a2enmod rewrite
 
-WORKDIR /var/www/html
+RUN docker-php-ext-install mysqli 
+RUN docker-php-ext-enable mysqli
 
-COPY . /var/www/html/
+RUN docker-php-ext-configure gd --with-freetype=/usr --with-jpeg=/usr
+RUN docker-php-ext-install gd
+
+COPY ./wordpress /var/www/html/
+
